@@ -1,7 +1,9 @@
+from calendar import c
 from crypt import methods
 import re
+from sre_constants import CH_UNICODE
 from tkinter import E
-from django.http import HttpResponse
+from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render 
 from .models import User
 import hashlib
@@ -41,6 +43,20 @@ def reg_view(request):
 
 def login_view(request):
     if request.method == 'GET':
+        #检查登陆状态
+
+        #检查session
+        if request.session.get('username') and request.session.get('uid'):
+            return HttpResponseRedirect('/index')
+        #检查cookies
+        c_username = request.COOKIES.get('username')
+        c_uid = request.COOKIES.get('uid')
+
+        if c_username and c_uid:
+            request.session['username'] = c_username
+            request.session['uid'] = c_uid
+            return HttpResponseRedirect('/index')
+
         return render(request, 'user/login.html')
     elif request.method == 'POST':
         #处理数据
@@ -64,8 +80,12 @@ def login_view(request):
         request.session['username'] = username
         request.session['uid'] = user.id
 
-        
+        return HttpResponseRedirect('/index')
+
+        if 'remember' in request.POST:
+            resp.set_cookie('username', username, 3600*24*3)
+            resp.set_cookie('uid', user.id, 3600*24*3)
         
 
-        return HttpResponse('---登陆成功---')
+        return resp
         
