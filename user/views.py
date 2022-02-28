@@ -1,8 +1,4 @@
-from calendar import c
-from crypt import methods
-import re
-from sre_constants import CH_UNICODE
-from tkinter import E
+
 from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render 
 from .models import User
@@ -80,7 +76,7 @@ def login_view(request):
         request.session['username'] = username
         request.session['uid'] = user.id
 
-        return HttpResponseRedirect('/index')
+        resp = HttpResponseRedirect('/index')
 
         if 'remember' in request.POST:
             resp.set_cookie('username', username, 3600*24*3)
@@ -89,3 +85,18 @@ def login_view(request):
 
         return resp
         
+
+def logout_view(requset):
+    if 'username' in requset.session:
+        del requset.session['username']
+    if 'uid' in requset.session:
+        del requset.session['uid']
+
+    
+    resp = HttpResponseRedirect('/index')
+    if 'uesrname' in requset.COOKIES:
+        resp.delete_cookie('username')
+    if 'uid' in requset.COOKIES:
+        resp.delete_cookie('uid')
+        
+    return resp

@@ -10,12 +10,12 @@
 
     {% if request.session.username %}
         <p>欢迎{{ request.session.username }}</p>
-        <p><a href="#">退出登陆</a></p>
+        <p><a href="/user/logout">退出登陆</a></p>
         <P><a href="#">进入我的笔记</a></P>
     {% else %}
         {% if request.COOKIES.username %}
         <p>欢迎{{ request.session.username }}</p>
-        <p><a href="#">退出登陆</a></p>
+        <p><a href="/user/logout">退出登陆</a></p>
         <P><a href="#">进入我的笔记</a></P>
         {% else %}
             <a href="/user/login">登陆</a>
