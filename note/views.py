@@ -1,7 +1,9 @@
+from tkinter import N
+from turtle import title
 from django.shortcuts import render
 from django.http import HttpResponse,HttpResponseRedirect
 
-import user
+from .models import User
 from .models import Note
 
 # Create your views here.
@@ -31,4 +33,28 @@ def add_note(request):
         Note.objects.create(title=title, content=content, user_id=uid)
         return  HttpResponse('---提交成功---')
 
+@check_login
+def list_note(request,uid):
+    if request.method == 'GET':
+        try:
+            #唯一索引，注意并发写入问题
+            user = User.objects.get(id = uid)
+        except Exception as e:
+            return HttpResponse('用户不存在')
 
+        notes = Note.objects.filter(user_id = 3)            
+        dict = {}
+        titles = [1,1]
+        contents = [1,1]
+        i = 0
+        dict['uesrname'] = user.username
+        for note in notes:
+            titles[i] = note.title
+            contents[i] = note.content
+            i += 1
+        dict['titles'] = titles
+        dict['contents'] = contents
+        print(dict)
+
+        return render(request, 'note/list_note.html', dict)
+        
